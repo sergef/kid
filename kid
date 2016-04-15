@@ -5,6 +5,7 @@
 KUBERNETES_VERSION=1.2.2
 KUBERNETES_API_PORT=8080
 KUBERNETES_DASHBOARD_NODEPORT=31999
+KUBERNETES_CLUSTER_DNS=8.8.8.8
 
 set -e
 
@@ -143,6 +144,7 @@ function start_kubernetes {
     local kubernetes_version=$1
     local kubernetes_api_port=$2
     local dashboard_service_nodeport=$3
+    local kubernetes_cluster_dns=$4
     check_prerequisites
 
     if kubectl cluster-info 2> /dev/null; then
@@ -168,7 +170,7 @@ function start_kubernetes {
             --address="0.0.0.0" \
             --api-servers=http://localhost:${kubernetes_api_port} \
             --config=/etc/kubernetes/manifests \
-            --cluster-dns=10.0.0.10 \
+            --cluster-dns=${kubernetes_cluster_dns} \
             --cluster-domain=cluster.local \
             --allow-privileged=true --v=2 \
 	    > /dev/null
@@ -210,7 +212,7 @@ function stop_kubernetes {
 }
 
 if [ "$1" == "up" ]; then
-    start_kubernetes $KUBERNETES_VERSION $KUBERNETES_API_PORT $KUBERNETES_DASHBOARD_NODEPORT
+    start_kubernetes $KUBERNETES_VERSION $KUBERNETES_API_PORT $KUBERNETES_DASHBOARD_NODEPORT $KUBERNETES_CLUSTER_DNS
 elif [ "$1" == "down" ]; then
     # TODO: Ensure current Kubernetes context is set to local Docker (or Docker Machine VM) before downing
     stop_kubernetes $KUBERNETES_API_PORT
