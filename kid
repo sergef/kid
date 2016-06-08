@@ -176,7 +176,7 @@ function start_kubernetes {
 	    > /dev/null
 
     # TODO: Set and use a `kid` Kubernetes context instead of forwarding the port?
-    forward_port_if_necessary $kubernetes_api_port
+    # forward_port_if_necessary $kubernetes_api_port
 
     echo Waiting for Kubernetes cluster to become available...
     wait_for_kubernetes
